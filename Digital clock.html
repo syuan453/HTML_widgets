@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital Clock</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5); /* Transparent background */
+  }
+
+  #clock-frame {
+    border: 10px solid #fff; /* White border */
+    border-radius: 20px;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.8); /* Transparent background */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* Shadow effect */
+  }
+
+  #clock {
+    font-family: "Arial",sans-serif; /* Font */
+    color: #F8A5A5; /* Color */
+    font-size: 10vw; /* Adjusts size automatically */
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  #date {
+    font-family: Arial, sans-serif;
+    color: #fff; /* White color */
+    font-size: 3vw;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div id="clock-frame">
+  <div id="clock"></div>
+  <div id="date"></div>
+</div>
+
+<script>
+  function updateTime() {
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    const date = `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')}`;
+    const dayOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][now.getDay()];
+    document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+    document.getElementById('date').textContent = `${date} ${dayOfWeek}`;
+  }
+
+  updateTime();
+  setInterval(updateTime, 1000);
+</script>
+</body>
+</html>
