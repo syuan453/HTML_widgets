@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital Clock</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Digital-7', sans-serif;
+    background-color: rgba(0, 0, 0, 0.3); /* Transparent background */
+  }
+  .container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: url('background.jpg'); /* Background image URL */
+    background-size: cover;
+  }
+  .clock {
+    font-size: 5vw; /* Adjusts size based on viewport width */
+    color: #fff;
+    text-shadow: 0 0 20px #F8A5A5; /* Shadow effect */
+    letter-spacing: 10px;
+  }
+  .date {
+    font-size: 2vw; /* Adjusts size based on viewport width */
+    color: #fff;
+    letter-spacing: 5px;
+    margin-top: 20px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="clock" id="clock"></div>
+  <div class="date" id="date"></div>
+</div>
+
+<script>
+function updateTime() {
+  var now = new Date();
+  var hours = now.getHours().toString().padStart(2, '0');
+  var minutes = now.getMinutes().toString().padStart(2, '0');
+  var seconds = now.getSeconds().toString().padStart(2, '0');
+  var dateString = now.getFullYear() + '/' + (now.getMonth() + 1).toString().padStart(2, '0') + '/' + now.getDate().toString().padStart(2, '0') + ' ' + getDayOfWeek(now.getDay());
+  document.getElementById('clock').textContent = hours + ':' + minutes + ':' + seconds;
+  document.getElementById('date').textContent = dateString;
+}
+
+function getDayOfWeek(day) {
+  var daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  return daysOfWeek[day];
+}
+
+updateTime(); // Call the function to display time immediately
+setInterval(updateTime, 1000); // Update time every second
+</script>
+</body>
+</html>
