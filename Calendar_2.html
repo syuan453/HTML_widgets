@@ -2,123 +2,93 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendar</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Responsive Calendar</title>
+<style>
+  .calendar {
+    display: inline-block;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+  }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+  .calendar h1 {
+    font-size: 1.5em;
+  }
 
-        th {
-            background-color: #f2f2f2;
-            border: 1px solid #ddd;
-        }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
 
-        td {
-            text-align: center;
-            border: 1px solid #ddd;
-            cursor: pointer;
-        }
+  td {
+    padding: 10px;
+    border: 1px solid #ccc;
+  }
 
-        td:hover {
-            background-color: #f5f5f5;
-        }
-
-        .current-day {
-            background-color: #d3d3d3;
-        }
-    </style>
+  .today {
+    border: 2px solid pink;
+  }
+</style>
 </head>
 
 <body>
-    <table>
-        <tr>
-            <th colspan="7">
-                <button id="prevMonthBtn" onclick="prevMonth()">&#8249;</button>
-                <span id="currentMonth"></span>
-                <button id="nextMonthBtn" onclick="nextMonth()">&#8250;</button>
-            </th>
-        </tr>
-        <tr>
-            <th>Sun</th>
-            <th>Mon</th>
-            <th>Tue</th>
-            <th>Wed</th>
-            <th>Thu</th>
-            <th>Fri</th>
-            <th>Sat</th>
-        </tr>
-        <tbody id="calendarBody"></tbody>
-    </table>
-    <script>
-        const calendarBody = document.getElementById('calendarBody');
-        const currentMonthEle = document.getElementById('currentMonth');
-        const prevMonthBtn = document.getElementById('prevMonthBtn');
-        const nextMonthBtn = document.getElementById('nextMonthBtn');
-        let currentDate = new Date();
-        let currentMonth = currentDate.getMonth();
-        let currentYear = currentDate.getFullYear();
+<div class="calendar">
+  <h1 id="currentDate"></h1>
+  <table id="calendar">
+    <tr>
+      <td>Sun</td>
+      <td>Mon</td>
+      <td>Tue</td>
+      <td>Wed</td>
+      <td>Thu</td>
+      <td>Fri</td>
+      <td>Sat</td>
+    </tr>
+  </table>
+</div>
 
-        function renderCalendar() {
-            calendarBody.innerHTML = '';
-            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-            const lastDay = new Date(currentYear, currentMonth + 1, 0).getDate();
+<script>
+function updateCalendar() {
+  let currentDate = new Date();
+  let year = currentDate.getFullYear();
+  let month = currentDate.getMonth();
+  let day = currentDate.getDate();
+  
+  document.getElementById("currentDate").innerText = `${year}-${month + 1}-${day}`;
+  
+  let firstDayOfMonth = new Date(year, month, 1);
+  let numOfDaysInMonth = new Date(year, month + 1, 0).getDate();
+  
+  let table = document.getElementById("calendar");
+  let row = table.insertRow(-1);
+  
+  let cellCount = 0;
+  for (let i = 0; i < firstDayOfMonth.getDay(); i++) {
+    let cell = row.insertCell(cellCount);
+    cellCount++;
+  }
+  
+  for (let i = 1; i <= numOfDaysInMonth; i++) {
+    if (cellCount > 6) {
+      row = table.insertRow(-1);
+      cellCount = 0;
+    }
+    
+    let cell = row.insertCell(cellCount);
+    cell.innerText = i;
+    if (year === currentDate.getFullYear() && month === currentDate.getMonth() && i === currentDate.getDate()) {
+      cell.classList.add("today");
+    }
+    
+    cellCount++;
+  }
+}
 
-            currentMonthEle.textContent = new Date(currentYear, currentMonth).toLocaleString('default', {
-                month: 'long',
-                year: 'numeric'
-            });
-
-            let dayCount = 1; // Start counting days from 1
-            for (let i = 0; i < 6; i++) {
-                const row = document.createElement('tr');
-                for (let j = 0; j < 7; j++) {
-                    const cell = document.createElement('td');
-
-                    if (i === 0 && j < firstDay) {
-                        cell.textContent = ''; // Empty cell before first day of the month
-                        cell.style.color = '#ccc'; // Style for days from previous month
-                    } else if (dayCount > lastDay) {
-                        cell.textContent = ''; // Empty cell after last day of the month
-                        cell.style.color = '#ccc'; // Style for days from next month
-                    } else {
-                        cell.textContent = dayCount;
-                        if (dayCount === currentDate.getDate() && currentMonth === currentDate.getMonth() && currentYear === currentDate.getFullYear()) {
-                            cell.classList.add('current-day'); // Highlight current day with different style
-                        }
-                        dayCount++;
-                    }
-
-                    cell.addEventListener('click', () => {
-                        console.log(`Clicked on ${cell.textContent}/${currentMonth + 1}/${currentYear}`);
-                    });
-
-                    row.appendChild(cell);
-                }
-                calendarBody.appendChild(row);
-            }
-        }
-
-        function prevMonth() {
-            currentMonth = currentMonth === 0 ? 11 : currentMonth - 1;
-            currentYear = currentMonth === 11 ? currentYear - 1 : currentYear;
-            renderCalendar();
-        }
-
-        function nextMonth() {
-            currentMonth = currentMonth === 11 ? 0 : currentMonth + 1;
-            currentYear = currentMonth === 0 ? currentYear + 1 : currentYear;
-            renderCalendar();
-        }
-
-        renderCalendar();
-    </script>
+updateCalendar();
+</script>
 </body>
-
 </html>
