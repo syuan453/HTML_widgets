@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .slideshow {
+            position: relative;
+            max-width: 100%;
+            height: auto;
+            margin: auto;
+        }
+
+        .slideshow img {
+            width: 100%;
+            display: none;
+        }
+        
+        .slideshow img {
+				    width: 100%; 
+				    height: auto; 
+				}
+
+        .slideshow img.active {
+            display: block;
+        }
+
+        .prev, .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            z-index: 1;
+        }
+
+        .prev {
+            left: 0;
+        }
+
+        .next {
+            right: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="slideshow">
+    <img class="active" src="image1.jpg" onclick="window.location='link1.html'">
+    <img src="image2.jpg" onclick="window.location='link2.html'">
+    <img src="image3.jpg" onclick="window.location='link3.html'">
+    <img src="image4.jpg" onclick="window.location='link4.html'">
+    
+    <div class="prev" onclick="changeSlide(-1)">&#10094;</div>
+    <div class="next" onclick="changeSlide(1)">&#10095;</div>
+</div>
+
+<script>
+    var slideIndex = 1;
+
+    showSlide(slideIndex);
+
+    function changeSlide(n) {
+        showSlide(slideIndex += n);
+    }
+
+    function showSlide(n) {
+        var slides = document.getElementsByClassName("slideshow")[0].getElementsByTagName("img");
+        if (n > slides.length) { slideIndex = 1 }
+        if (n < 1) { slideIndex = slides.length }
+        
+        for (var i = 0; i < slides.length; i++) {
+            slides[i].classList.remove("active");
+        }
+        
+        slides[slideIndex - 1].classList.add("active");
+    }
+
+    setInterval(function() {
+        changeSlide(1)
+    }, 5000);
+</script>
+
+</body>
+</html>
