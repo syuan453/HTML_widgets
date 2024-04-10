@@ -1,124 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendar</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th {
-            background-color: #f2f2f2;
-            border: 1px solid #ddd;
-        }
-
-        td {
-            text-align: center;
-            border: 1px solid #ddd;
-            cursor: pointer;
-        }
-
-        td:hover {
-            background-color: #f5f5f5;
-        }
-
-        .current-day {
-            background-color: #d3d3d3;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dynamic HTML Calendar</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    .calendar {
+        max-width: 600px;
+        margin: 20px auto;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+    .calendar header {
+        background-color: #f2f2f2;
+        padding: 10px;
+        display: flex;
+        justify-content: space-between;
+    }
+    .calendar table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .calendar th,
+    .calendar td {
+        padding: 10px;
+        text-align: center;
+        border: 1px solid #ccc;
+    }
+    .calendar th {
+        background-color: #f2f2f2;
+    }
+    .calendar td {
+        cursor: pointer;
+    }
+    .calendar td:hover {
+        background-color: #f2f2f2;
+    }
+    .current-day {
+        background-color: #ffcccb; /* Light pink background color for current day */
+    }
+</style>
 </head>
-
 <body>
-    <table>
-        <tr>
-            <th colspan="7">
-                <button id="prevMonthBtn" onclick="prevMonth()">&#8249;</button>
-                <span id="currentMonth"></span>
-                <button id="nextMonthBtn" onclick="nextMonth()">&#8250;</button>
-            </th>
-        </tr>
-        <tr>
-            <th>Sun</th>
-            <th>Mon</th>
-            <th>Tue</th>
-            <th>Wed</th>
-            <th>Thu</th>
-            <th>Fri</th>
-            <th>Sat</th>
-        </tr>
-        <tbody id="calendarBody"></tbody>
-    </table>
-    <script>
-        const calendarBody = document.getElementById('calendarBody');
-        const currentMonthEle = document.getElementById('currentMonth');
-        const prevMonthBtn = document.getElementById('prevMonthBtn');
-        const nextMonthBtn = document.getElementById('nextMonthBtn');
-        let currentDate = new Date();
-        let currentMonth = currentDate.getMonth();
-        let currentYear = currentDate.getFullYear();
 
-        function renderCalendar() {
-            calendarBody.innerHTML = '';
-            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-            const lastDay = new Date(currentYear, currentMonth + 1, 0).getDate();
+<div class="calendar">
+    <header>
+        <button onclick="previousMonth()"><</button>
+        <h2 id="currentMonthYear"></h2>
+        <button onclick="nextMonth()">></button>
+    </header>
+    <table id="calendarTable"></table>
+</div>
 
-            currentMonthEle.textContent = new Date(currentYear, currentMonth).toLocaleString('default', {
-                month: 'long',
-                year: 'numeric'
-            });
+<script>
+    let currentMonth = new Date().getMonth();
+    let currentYear = new Date().getFullYear();
+    let currentDay = new Date().getDate();
 
-            let dayCount = 1; // Start counting days from 1
-            for (let i = 0; i < 6; i++) {
-                const row = document.createElement('tr');
-                for (let j = 0; j < 7; j++) {
-                    const cell = document.createElement('td');
+    function generateCalendar(year, month) {
+        const headerElement = document.getElementById('currentMonthYear');
+        headerElement.textContent = new Date(year, month).toLocaleString('en-us', {month: 'long'}) + ' ' + year;
 
-                    if (i === 0 && j < firstDay) {
-                        cell.textContent = ''; // Empty cell before first day of the month
-                        cell.style.color = '#ccc'; // Style for days from previous month
-                    } else if (dayCount > lastDay) {
-                        cell.textContent = ''; // Empty cell after last day of the month
-                        cell.style.color = '#ccc'; // Style for days from next month
-                    } else {
-                        cell.textContent = dayCount;
-                        if (dayCount === currentDate.getDate() && currentMonth === currentDate.getMonth() && currentYear === currentDate.getFullYear()) {
-                            cell.classList.add('current-day'); // Highlight current day with different style
-                        }
-                        dayCount++;
-                    }
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const firstDayOfWeek = new Date(year, month, 1).getDay();
 
-                    cell.addEventListener('click', () => {
-                        console.log(`Clicked on ${cell.textContent}/${currentMonth + 1}/${currentYear}`);
-                    });
+        const calendarTable = document.getElementById('calendarTable');
+        let calendarHTML = '<tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr>';
 
-                    row.appendChild(cell);
+        let dayCount = 1;
+        let rowCount = 1;
+
+        while (dayCount <= daysInMonth) {
+            calendarHTML += '<tr>';
+            for (let j = 0; j < 7; j++) { // 7 days in a week
+                if ((rowCount === 1 && j < firstDayOfWeek) || dayCount > daysInMonth) {
+                    calendarHTML += '<td></td>';
+                } else {
+                    const dayClass = (dayCount === currentDay && month === new Date().getMonth() && year === new Date().getFullYear()) ? 'current-day' : '';
+                    calendarHTML += '<td class="' + dayClass + '">' + dayCount + '</td>';
+                    dayCount++;
                 }
-                calendarBody.appendChild(row);
             }
+            calendarHTML += '</tr>';
+            rowCount++;
         }
 
-        function prevMonth() {
-            currentMonth = currentMonth === 0 ? 11 : currentMonth - 1;
-            currentYear = currentMonth === 11 ? currentYear - 1 : currentYear;
-            renderCalendar();
-        }
+        calendarTable.innerHTML = calendarHTML;
+    }
 
-        function nextMonth() {
-            currentMonth = currentMonth === 11 ? 0 : currentMonth + 1;
-            currentYear = currentMonth === 0 ? currentYear + 1 : currentYear;
-            renderCalendar();
+    function previousMonth() {
+        currentMonth -= 1;
+        if (currentMonth < 0) {
+            currentMonth = 11;
+            currentYear -= 1;
         }
+        generateCalendar(currentYear, currentMonth);
+    }
 
-        renderCalendar();
-    </script>
+    function nextMonth() {
+        currentMonth += 1;
+        if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear += 1;
+        }
+        generateCalendar(currentYear, currentMonth);
+    }
+
+    generateCalendar(currentYear, currentMonth);
+</script>
+
 </body>
-
 </html>
