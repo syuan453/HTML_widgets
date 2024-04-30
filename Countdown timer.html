@@ -44,19 +44,12 @@
         
         <div id="countdown"></div><br>
         <input type="date" id="target-date">
-        <button id="set-date-btn">設定日期</button>
+        <button onclick="setTargetDate()">設定日期</button>
     </div>
 
     <script>
-        'use strict';
-
-        const countdownContainer = document.querySelector('.countdown-container');
-        const countdownDisplay = document.getElementById('countdown');
-        const targetDateInput = document.getElementById('target-date');
-        const setDateButton = document.getElementById('set-date-btn');
-
         function setTargetDate() {
-            const targetDate = targetDateInput.value;
+            const targetDate = document.getElementById('target-date').value;
             const currentDate = new Date();
             const selectedDate = new Date(targetDate);
             
@@ -64,7 +57,7 @@
                 alert('請輸入有效日期');
                 return;
             }
-
+            
             localStorage.setItem('targetDate', targetDate);
             calculateDaysLeft(targetDate);
         }
@@ -75,30 +68,21 @@
             const millisecondsPerDay = 1000 * 60 * 60 * 24;
             const daysLeft = Math.ceil((targetDateObj - currentDate) / millisecondsPerDay);
 
-            countdownDisplay.innerHTML = `距離<span style = "text-shadow: 2px 2px 4px #00ff00"> ${targetDate}</span> 還剩下 <strong style = "font-size:40px; text-decoration: underline; text-shadow: 2px 2px 4px #00ff00""> ${daysLeft}</strong> 天`;
+            document.getElementById('countdown').innerHTML = `距離<span style="text-shadow: 2px 2px 4px #00ff00">${targetDate}</span> 還剩下 <strong style="font-size:40px; text-decoration: underline; text-shadow: 2px 2px 4px #00ff00">${daysLeft}</strong> 天`;
         }
 
-        function initializeCountdown() {
+        const savedTargetDate = localStorage.getItem('targetDate');
+        if (savedTargetDate) {
+            calculateDaysLeft(savedTargetDate);
+        }
+
+        // 自動更新倒數天數
+        setInterval(() => {
             const savedTargetDate = localStorage.getItem('targetDate');
             if (savedTargetDate) {
                 calculateDaysLeft(savedTargetDate);
             }
-        }
-
-        function refreshAtMidnight() {
-            setInterval(function() {
-                const currentDate = new Date();
-                if (currentDate.getHours() === 0 && currentDate.getMinutes() === 0 && currentDate.getSeconds() === 0) {
-                    const targetDate = localStorage.getItem('targetDate');
-                    calculateDaysLeft(targetDate);
-                }
-            }, 1000);
-        }
-
-        setDateButton.addEventListener('click', setTargetDate);
-
-        initializeCountdown();
-        refreshAtMidnight();
+        }, 1000 * 60 * 60 * 24); // 每隔24小時自動更新一次
     </script>
 </body>
 </html>
