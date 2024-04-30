@@ -44,12 +44,19 @@
         
         <div id="countdown"></div><br>
         <input type="date" id="target-date">
-        <button onclick="setTargetDate()">設定日期</button>
+        <button id="set-date-btn">設定日期</button>
     </div>
 
     <script>
+        'use strict';
+
+        const countdownContainer = document.querySelector('.countdown-container');
+        const countdownDisplay = document.getElementById('countdown');
+        const targetDateInput = document.getElementById('target-date');
+        const setDateButton = document.getElementById('set-date-btn');
+
         function setTargetDate() {
-            const targetDate = document.getElementById('target-date').value;
+            const targetDate = targetDateInput.value;
             const currentDate = new Date();
             const selectedDate = new Date(targetDate);
             
@@ -68,13 +75,30 @@
             const millisecondsPerDay = 1000 * 60 * 60 * 24;
             const daysLeft = Math.ceil((targetDateObj - currentDate) / millisecondsPerDay);
 
-            document.getElementById('countdown').innerHTML = `距離<span style = "text-shadow: 2px 2px 4px #00ff00"> ${targetDate}</span> 還剩下 <strong style = "font-size:40px; text-decoration: underline; text-shadow: 2px 2px 4px #00ff00""> ${daysLeft}</strong> 天`;
+            countdownDisplay.innerHTML = `距離<span style = "text-shadow: 2px 2px 4px #00ff00"> ${targetDate}</span> 還剩下 <strong style = "font-size:40px; text-decoration: underline; text-shadow: 2px 2px 4px #00ff00""> ${daysLeft}</strong> 天`;
         }
 
-        const savedTargetDate = localStorage.getItem('targetDate');
-        if (savedTargetDate) {
-            calculateDaysLeft(savedTargetDate);
+        function initializeCountdown() {
+            const savedTargetDate = localStorage.getItem('targetDate');
+            if (savedTargetDate) {
+                calculateDaysLeft(savedTargetDate);
+            }
         }
+
+        function refreshAtMidnight() {
+            setInterval(function() {
+                const currentDate = new Date();
+                if (currentDate.getHours() === 0 && currentDate.getMinutes() === 0 && currentDate.getSeconds() === 0) {
+                    const targetDate = localStorage.getItem('targetDate');
+                    calculateDaysLeft(targetDate);
+                }
+            }, 1000);
+        }
+
+        setDateButton.addEventListener('click', setTargetDate);
+
+        initializeCountdown();
+        refreshAtMidnight();
     </script>
 </body>
 </html>
